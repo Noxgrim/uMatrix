@@ -95,6 +95,45 @@ var cleanEditText = '';
 var differ;
 
 /******************************************************************************/
+// This segment is an almost direct copy of code from uBlockOrigin.
+// Introducing commit: https://github.com/gorhill/uBlock/commit/f3773ef6ebc05e0a25c7a1a1196c51769e7f37a0
+
+// The following code is to take care of properly internationalizing
+// the tooltips of the arrows used by the CodeMirror merge view. These
+// are hard-coded by CodeMirror ("Push to left", "Push to right"). An
+// observer is necessary because there is no hook for uBO to overwrite
+// reliably the default title attribute assigned by CodeMirror.
+
+(function() {
+    const i18nCommitStr = vAPI.i18n('userRulesCommit');
+    const i18nRevertStr = vAPI.i18n('userRulesRevert');
+    const commitArrowSelector = '.CodeMirror-merge-copybuttons-left .CodeMirror-merge-copy-reverse:not([title="' + i18nCommitStr + '"])';
+    const revertArrowSelector = '.CodeMirror-merge-copybuttons-left .CodeMirror-merge-copy:not([title="' + i18nRevertStr + '"])';
+
+    uDom.nodeFromSelector('.CodeMirror-merge-scrolllock')
+        .setAttribute('title', vAPI.i18n('genericMergeViewScrollLock'));
+
+    const translate = function() {
+        let elems = document.querySelectorAll(commitArrowSelector);
+        for ( const elem of elems ) {
+            elem.setAttribute('title', i18nCommitStr);
+        }
+        elems = document.querySelectorAll(revertArrowSelector);
+        for ( const elem of elems ) {
+            elem.setAttribute('title', i18nRevertStr);
+        }
+    };
+
+    const mergeGapObserver = new MutationObserver(translate);
+
+    mergeGapObserver.observe(
+        uDom.nodeFromSelector('.CodeMirror-merge-copybuttons-left'),
+        { attributes: true, attributeFilter: [ 'title' ], subtree: true }
+    );
+
+})();
+
+/******************************************************************************/
 
 // Borrowed from...
 // https://github.com/codemirror/CodeMirror/blob/3e1bb5fff682f8f6cbfaef0e56c61d62403d4798/addon/search/search.js#L22

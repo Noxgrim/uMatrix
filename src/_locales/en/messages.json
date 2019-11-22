@@ -752,5 +752,9 @@
     "genericApplyChanges": {
         "message": "Apply changes",
         "description": "for generic 'Apply changes' buttons"
+    },
+    "genericMergeViewScrollLock":{
+        "message":"Toggle locked scrolling",
+        "description":"Tooltip for the button used to lock scrolling between the views in the 'My rules' pane"
     }
 }
